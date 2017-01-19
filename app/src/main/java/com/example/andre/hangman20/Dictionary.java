@@ -11,10 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-/**
- * Created by andre on 1/15/2017.
- */
-
 public class Dictionary extends Activity {
     private ArrayList<String> myWords = new ArrayList<>();
 
@@ -38,9 +34,8 @@ public class Dictionary extends Activity {
 
             while (myReader.ready()&&wordIndex<howManyWords){
                 word = myReader.readLine();
-                if(word.equals("")){
+                if(!word.equals("")){
                     myWords.add(word);
-                    wordIndex++;
                 }
             }
             myReader.close();
@@ -80,7 +75,7 @@ public class Dictionary extends Activity {
     }
     private void manuallyFillWords(){
         myWords.add("pizza");
-        myWords.add("person");
+        myWords.add("bread");
         myWords.add("dummy");
         myWords.add("couch");
         myWords.add("phone");

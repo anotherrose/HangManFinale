@@ -1,5 +1,6 @@
 package com.example.andre.hangman20;
 
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,140 +15,204 @@ public class MainActivity extends AppCompatActivity {
     private int strikes=0;
     private int score=0;
     final private int winLimit = 5;
-    final private int loseLimit = 5;
-    private Dictionary myDictionary = new Dictionary(getApplicationContext(),"words");
-    private ArrayList<String> words = myDictionary.getMyWords();
-    private String[] word =  createWords(words);
-    final private ImageView myMan = (ImageView) findViewById(R.id.imgMan);
+    final private int loseLimit = 7;
+    private static String[] word;
+    private static ImageView  myMan;
+    private static Dictionary myDictionary;
+    private static ArrayList<String> words;
+    private boolean letterGuessed1, letterGuessed2,letterGuessed3,letterGuessed4,letterGuessed5;
+    private String wrongLetters = " ";
+    private TextView wrongs;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myMan.setImageResource(R.drawable.HangManDefault);
+        myMan = (ImageView) findViewById(R.id.imgMan);
+        myMan.setImageResource(R.drawable.hang0);
+
+        myDictionary = new Dictionary(getApplicationContext(),"words5.txt");
+        words = myDictionary.getMyWords();
+        word =  createWords(words);
+
+        letterGuessed1 = false;
+        letterGuessed2 = false;
+        letterGuessed3 = false;
+        letterGuessed4 = false;
+        letterGuessed5 = false;
 
         final TextView LetterOne = (TextView) findViewById(R.id.txtLetterOne);
         final TextView LetterTwo = (TextView) findViewById(R.id.txtLetterTwo);
         final TextView LetterThree = (TextView) findViewById(R.id.txtLetterThree);
         final TextView LetterFour = (TextView) findViewById(R.id.txtLetterFour);
         final TextView LetterFive = (TextView) findViewById(R.id.txtLetterFive);
+        wrongs = (TextView) findViewById(R.id.txtWrongLetters);
 
         final EditText userSubbmit = (EditText) findViewById(R.id.txtSubbmit);
-        Button subbmit = (Button) findViewById(R.id.btnSubbmit);
+
+        final Button subbmit = (Button) findViewById(R.id.btnSubbmit);
         final Button reset = (Button) findViewById(R.id.btnReset);
 
         subbmit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String l =  userSubbmit.getText().toString();
-                if (l.equals(word[0])) {
+                if (l.equals(word[0]) && !letterGuessed1) {
                     LetterOne.setText(word[0]);
                     score++;
+                    letterGuessed1=true;
                 }
-                else {
-                    strikes++;
-                    changeMan(strikes);
-                }
-                if (l.equals(word[1])) {
+                if (l.equals(word[1]) && !letterGuessed2) {
                     LetterTwo.setText(word[1]);
                     score++;
+                    letterGuessed2=true;
                 }
-                else {
-                    strikes++;
-                    changeMan(strikes);
-                }
-                if (l.equals(word[2])) {
+                if (l.equals(word[2]) && !letterGuessed3) {
                     LetterThree.setText(word[2]);
                     score++;
+                    letterGuessed3=true;
                 }
-                else {
-                    strikes++;
-                    changeMan(strikes);
-                }
-                if (l.equals(word[3])) {
+                if (l.equals(word[3]) && !letterGuessed4) {
                     LetterFour.setText(word[3]);
                     score++;
+                    letterGuessed4=true;
                 }
-                else {
-                    strikes++;
-                    changeMan(strikes);
-                }
-                if (l.equals(word[4])) {
+                if (l.equals(word[4]) && !letterGuessed5) {
                     LetterFive.setText(word[4]);
                     score++;
+                    letterGuessed5=true;
                 }
-                else {
-                    strikes++;
-                    changeMan(strikes);
+
+                if (    !l.equals(word[0]) &&
+                        !l.equals(word[1]) &&
+                        !l.equals(word[2]) &&
+                        !l.equals(word[3]) &&
+                        !l.equals(word[4])){
+                 strikes++;
+                 changeMan();
+                 wrongLetters = wrongLetters + l + " ";
+                 wrongs.setText(wrongLetters);
                 }
 
                 if(score>=winLimit)
-                    resetGame("win");//win
+                    endGame("win");//win
                 if (strikes>=loseLimit)
-                    resetGame("lose");//lose
+                    endGame("lose");//lose
+
+                userSubbmit.setText("");
 
             }
         });
 
         reset.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                resetGame("lose");
+                resetGame();
             }
         });
 
-
     }
     private String[] createWords(ArrayList<String> myWords){
-        String[] usableWord = new String[5];
+        String[] usableWord = new String[myWords.get(0).length()];
         String word = myWords.get((int)(Math.random()*myWords.size()));
-        for (int i = 0; i<5; i++){
-            usableWord[i]=word.substring(i,i++);
+        for (int i = 0; i<myWords.get(0).length(); i++){
+            usableWord[i]=word.substring(i,i+1);
         }
         return usableWord;
     }
 
-    private void changeMan(int strike){
-        switch (strike){
-            case 1 : myMan.setImageResource(R.drawable.HangMan5);
+    private void changeMan(){
+        switch (strikes){
+            case 1 : myMan.setImageResource(R.drawable.hang1);
                      break;
-            case 2 : myMan.setImageResource(R.drawable.HangMan5);
+            case 2 : myMan.setImageResource(R.drawable.hang2);
                     break;
-            case 3 : myMan.setImageResource(R.drawable.HangMan5);
+            case 3 : myMan.setImageResource(R.drawable.hang3);
                     break;
-            case 4 : myMan.setImageResource(R.drawable.HangMan5);
+            case 4 : myMan.setImageResource(R.drawable.hang4);
                     break;
-            case 5 : myMan.setImageResource(R.drawable.HangMan5);
+            case 5 : myMan.setImageResource(R.drawable.hang5);
                     break;
+            case 6 : myMan.setImageResource(R.drawable.hang6);
+                break;
+            case 7 : myMan.setImageResource(R.drawable.hang7);
+                break;
         }
     }
 
-    private void resetGame(String result){
+    private void endGame(String result){
         score=0;
         strikes=0;
-        myMan.setImageResource(R.drawable.HangManDefault);
 
-        final TextView LetterOne = (TextView) findViewById(R.id.txtLetterOne);
-        final TextView LetterTwo = (TextView) findViewById(R.id.txtLetterTwo);
-        final TextView LetterThree = (TextView) findViewById(R.id.txtLetterThree);
-        final TextView LetterFour = (TextView) findViewById(R.id.txtLetterFour);
-        final TextView LetterFive = (TextView) findViewById(R.id.txtLetterFive);
+        TextView LetterOne = (TextView) findViewById(R.id.txtLetterOne);
+        TextView LetterTwo = (TextView) findViewById(R.id.txtLetterTwo);
+        TextView LetterThree = (TextView) findViewById(R.id.txtLetterThree);
+        TextView LetterFour = (TextView) findViewById(R.id.txtLetterFour);
+        TextView LetterFive = (TextView) findViewById(R.id.txtLetterFive);
+
+        MediaPlayer losePlayer = MediaPlayer.create(this,R.raw.losersound);
+        MediaPlayer winPlayer = MediaPlayer.create(this,R.raw.winnersong);
+
+        Button submit = (Button) findViewById(R.id.btnSubbmit);
+        submit.setEnabled(false);
 
         if (result.equals("win")) {
             LetterOne.setText("W");
             LetterTwo.setText("I");
             LetterThree.setText("N");
-            LetterFour.setText("E");
-            LetterFive.setText("R");
+            LetterFour.setText("!");
+            LetterFive.setText("!");
+            myMan.setImageResource(R.drawable.hang0);
+            winPlayer.start();
         }
         if (result.equals("lose")) {
             LetterOne.setText("L");
             LetterTwo.setText("O");
             LetterThree.setText("S");
             LetterFour.setText("E");
-            LetterFive.setText("R");
+            LetterFive.setText("!");
+            losePlayer.start();
         }
+
+        String myWord = "";
+        for (int i=0; i<word.length;i++)
+            myWord+=word[i];
+        wrongs.setText(myWord);
 
     }
 
+    private void resetGame(){
+        strikes = 0;
+        score = 0;
+
+        final EditText userSubbmit = (EditText) findViewById(R.id.txtSubbmit);
+        TextView LetterOne = (TextView) findViewById(R.id.txtLetterOne);
+        TextView LetterTwo = (TextView) findViewById(R.id.txtLetterTwo);
+        TextView LetterThree = (TextView) findViewById(R.id.txtLetterThree);
+        TextView LetterFour = (TextView) findViewById(R.id.txtLetterFour);
+        TextView LetterFive = (TextView) findViewById(R.id.txtLetterFive);
+
+        Button submit = (Button) findViewById(R.id.btnSubbmit);
+        submit.setEnabled(true);
+
+        LetterOne.setText("");
+        LetterTwo.setText("");
+        LetterThree.setText("");
+        LetterFour.setText("");
+        LetterFive.setText("");
+
+        userSubbmit.setText("");
+        wrongs.setText("");
+        wrongLetters="";
+
+        myMan.setImageResource(R.drawable.hang0);
+
+        word = createWords(words);
+
+        letterGuessed1=false;
+        letterGuessed2=false;
+        letterGuessed3=false;
+        letterGuessed4=false;
+        letterGuessed5=false;
+    }
 
 }
