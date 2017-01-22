@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    //necessary fields used throughout class
     private int strikes=0;
     private int score=0;
     final private int winLimit = 5;
@@ -20,11 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private static ImageView  myMan;
     private static Dictionary myDictionary;
     private static ArrayList<String> words;
-    private boolean letterGuessed1, letterGuessed2,letterGuessed3,letterGuessed4,letterGuessed5;
+    private boolean letterGuessed1,letterGuessed2,letterGuessed3,letterGuessed4,letterGuessed5=false;
     private String wrongLetters = " ";
     private TextView wrongs;
-    @Override
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -35,12 +36,6 @@ public class MainActivity extends AppCompatActivity {
         myDictionary = new Dictionary(getApplicationContext(),"words5.txt");
         words = myDictionary.getMyWords();
         word =  createWords(words);
-
-        letterGuessed1 = false;
-        letterGuessed2 = false;
-        letterGuessed3 = false;
-        letterGuessed4 = false;
-        letterGuessed5 = false;
 
         final TextView LetterOne = (TextView) findViewById(R.id.txtLetterOne);
         final TextView LetterTwo = (TextView) findViewById(R.id.txtLetterTwo);
@@ -56,7 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
         subbmit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //letter submitted by user
                 String l =  userSubbmit.getText().toString();
+                //checks if user put in two letters instead of one
+                if (l.length()>1) return;
+
+                //checks is the submitted letter matches any letters in chosen word
                 if (l.equals(word[0]) && !letterGuessed1) {
                     LetterOne.setText(word[0]);
                     score++;
@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     letterGuessed5=true;
                 }
 
+                //if the submitted letter does not match any letter in the word it "hangs" the man
                 if (    !l.equals(word[0]) &&
                         !l.equals(word[1]) &&
                         !l.equals(word[2]) &&
@@ -94,23 +95,26 @@ public class MainActivity extends AppCompatActivity {
                  wrongs.setText(wrongLetters);
                 }
 
+                //checks if game has ended
                 if(score>=winLimit)
                     endGame("win");//win
                 if (strikes>=loseLimit)
                     endGame("lose");//lose
 
+                //clears text for next letter
                 userSubbmit.setText("");
 
             }
         });
 
+        //resets the game to beggining
         reset.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 resetGame();
             }
         });
-
     }
+    //chooses and returns a random word in an array
     private String[] createWords(ArrayList<String> myWords){
         String[] usableWord = new String[myWords.get(0).length()];
         String word = myWords.get((int)(Math.random()*myWords.size()));
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         return usableWord;
     }
 
+    //changes man based on strikes
     private void changeMan(){
         switch (strikes){
             case 1 : myMan.setImageResource(R.drawable.hang1);
@@ -139,16 +144,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //shows end game based on win or lose
     private void endGame(String result){
-        score=0;
-        strikes=0;
-
         TextView LetterOne = (TextView) findViewById(R.id.txtLetterOne);
         TextView LetterTwo = (TextView) findViewById(R.id.txtLetterTwo);
         TextView LetterThree = (TextView) findViewById(R.id.txtLetterThree);
         TextView LetterFour = (TextView) findViewById(R.id.txtLetterFour);
         TextView LetterFive = (TextView) findViewById(R.id.txtLetterFive);
 
+        //plays music based on win/lose
         MediaPlayer losePlayer = MediaPlayer.create(this,R.raw.losersound);
         MediaPlayer winPlayer = MediaPlayer.create(this,R.raw.winnersong);
 
@@ -180,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //resets values and images
     private void resetGame(){
         strikes = 0;
         score = 0;
